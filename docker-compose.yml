@@ -1,6 +1,5 @@
-
 services:
-  # Base de données PostgreSQL
+
   db:
     image: postgres:14
     container_name: project_devops
@@ -12,17 +11,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - flask_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Application Flask
   web:
-    build: .
+    image: hertin12/projet_devops:latest
     container_name: devops_project
     ports:
       - "5000:5000"
@@ -32,13 +28,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - flask_network
     restart: unless-stopped
 
 volumes:
   postgres_data:
-
-networks:
-  flask_network:
-    driver: bridge
