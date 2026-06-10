@@ -52,19 +52,19 @@ pipeline {
 
     post {
         success {
-            echo '✅ Pipeline terminé avec succès'
+            echo 'Pipeline terminé avec succès'
             emailext(
                 subject: "SUCCESS - Build #${BUILD_NUMBER}",
-                body: "Pipeline réussi 🚀\nApp: http://localhost:5000",
+                body: "Pipeline réussi \nApp: http://localhost:5000",
                 to: "heritianajulien12@gmail.com"
             )
         }
 
         failure {
-            echo '❌ Pipeline échoué'
+            echo 'Pipeline échoué'
             emailext(
                 subject: "FAILED - Build #${BUILD_NUMBER}",
-                body: "Pipeline échoué ❌\nVérifier Jenkins logs",
+                body: "Pipeline échoué \nVérifier Jenkins logs",
                 to: "heritianajulien12@gmail.com"
             )
         }
