@@ -1,11 +1,29 @@
 import os
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement depuis .env
+load_dotenv()
+
 
 class Config:
-    # Configuration PostgreSQL locale
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:admin@db:5432/devops_db'
+    """Configuration locale (Windows / Linux sans Docker)."""
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql://{os.environ.get('DB_USER')}:"
+        f"{os.environ.get('DB_PASSWORD')}@"
+        f"{os.environ.get('DB_HOST')}:"
+        f"{os.environ.get('DB_PORT')}/"
+        f"{os.environ.get('DB_NAME')}"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = '28f218fd66fbffb35db4dff88b9628d1a88fa17856f22c9fe811b01bed614ea0304e3bef8cbcddf39084898378af8cd5b2e406e82d6269c067ef95e1ec0bf038'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+
 
 class DockerConfig(Config):
-    # Configuration pour Docker Compose
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:admin@db:5432/devops_db'
+    """Configuration Docker Compose — force le host à 'db' (nom du service)."""
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql://{os.environ.get('DB_USER')}:"
+        f"{os.environ.get('DB_PASSWORD')}@"
+        f"db:"
+        f"{os.environ.get('DB_PORT')}/"
+        f"{os.environ.get('DB_NAME')}"
+    )
