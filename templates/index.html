@@ -1,41 +1,53 @@
 {% extends 'base.html' %}
 
-{% block title %}Liste des Utilisateurs{% endblock %}
+{% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Liste des Utilisateurs</h1>
-    <a href="{{ url_for('main.create') }}" class="btn btn-primary">➕ Nouvel Utilisateur</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Utilisateurs</h1>
+        <p class="page-subtitle">{{ users|length }} enregistrement{{ 's' if users|length != 1 else '' }}</p>
+    </div>
+    <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modalCreate">
+        Ajouter un utilisateur
+    </button>
 </div>
 
 {% if users %}
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Nom</th>
                 <th>Prénom</th>
-                <th>Email</th>
+                <th>Adresse e-mail</th>
                 <th>Téléphone</th>
+                <th>Date d'ajout</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
             <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.nom }}</td>
+                <td class="cell-id">{{ user.id }}</td>
+                <td class="cell-name">{{ user.nom }}</td>
                 <td>{{ user.prenom }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.telephone or '-' }}</td>
-                <td>
-                    <a href="{{ url_for('main.view', id=user.id) }}" class="btn btn-sm btn-info">👁️</a>
-                    <a href="{{ url_for('main.edit', id=user.id) }}" class="btn btn-sm btn-warning">✏️</a>
-                    <form action="{{ url_for('main.delete', id=user.id) }}" method="POST" style="display:inline;" 
-                          onsubmit="return confirm('Supprimer cet utilisateur ?');">
-                        <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
-                    </form>
+                <td class="cell-email">{{ user.email }}</td>
+                <td>{{ user.telephone or '—' }}</td>
+                <td class="cell-date">{{ user.date_creation.strftime('%d/%m/%Y') }}</td>
+                <td class="cell-actions">
+                    <a href="{{ url_for('main.view', id=user.id) }}" class="action-btn action-btn--view">Voir</a>
+                    <button
+                        class="action-btn action-btn--edit"
+                        onclick="openEditModal({{ user.id }}, '{{ user.nom }}', '{{ user.prenom }}', '{{ user.email }}', '{{ user.telephone or '' }}')">
+                        Modifier
+                    </button>
+                    <button
+                        class="action-btn action-btn--delete"
+                        onclick="openDeleteModal({{ user.id }})">
+                        Supprimer
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -43,8 +55,12 @@
     </table>
 </div>
 {% else %}
-<div class="alert alert-info">
-    Aucun utilisateur trouvé. <a href="{{ url_for('main.create') }}">Créer le premier</a>
+<div class="empty-state">
+    <p class="empty-state__title">Aucun utilisateur enregistré</p>
+    <p class="empty-state__sub">Commencez par ajouter un utilisateur.</p>
+    <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modalCreate">
+        Ajouter le premier utilisateur
+    </button>
 </div>
 {% endif %}
 {% endblock %}
